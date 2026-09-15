@@ -1,0 +1,7 @@
+spring:
+  datasource:
+    url: ${CARDDEMO_TEST_DB_URL:jdbc:postgresql://localhost:5432/carddemo_test}
+    username: ${CARDDEMO_DB_USER:carddemo}
+    password: ${CARDDEMO_DB_PASSWORD:carddemo}
+  flyway:
+    clean-disabled: false
