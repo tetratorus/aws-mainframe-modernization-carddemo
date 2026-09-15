@@ -53,14 +53,17 @@ public class LegacyDataLoader implements ApplicationRunner {
   @Override
   @Transactional
   public void run(ApplicationArguments args) throws IOException {
-    Path dir = Path.of(properties.legacyDataDir());
-    if (accounts.count() == 0) {
+    Path dir = Path.of(properties.legacyDataDir()).toAbsolutePath().normalize();
+    boolean businessTablesEmpty =
+        accounts.count() == 0 && xrefs.count() == 0 && transactions.count() == 0;
+    if (!businessTablesEmpty) {
+      log.info("Business tables already populated; legacy sample data not loaded");
+    } else if (!Files.isDirectory(dir)) {
+      log.warn(
+          "Legacy sample directory {} not found; set carddemo.legacy-data-dir to seed data", dir);
+    } else {
       accounts.saveAll(read(dir.resolve("acctdata.txt"), LegacyRecordParser::account));
-    }
-    if (xrefs.count() == 0) {
       xrefs.saveAll(read(dir.resolve("cardxref.txt"), LegacyRecordParser::cardXref));
-    }
-    if (transactions.count() == 0) {
       transactions.saveAll(read(dir.resolve("dailytran.txt"), LegacyRecordParser::transaction));
     }
     if (properties.seedUsers() && users.count() == 0) {

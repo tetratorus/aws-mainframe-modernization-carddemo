@@ -19,3 +19,10 @@ carddemo:
 
 server:
   port: ${PORT:8080}
+  servlet:
+    session:
+      cookie:
+        http-only: true
+        same-site: strict
+        # Set to true behind TLS; false only for plain-HTTP local development.
+        secure: ${CARDDEMO_COOKIE_SECURE:false}

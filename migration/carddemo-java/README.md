@@ -36,7 +36,8 @@ it with Flyway before loading the legacy sample data, so parity assertions (acco
 ## Deliberate deviations from the COBOL (see plan §4, D-1/D-2/D-7)
 
 - Passwords are stored bcrypt-hashed instead of clear text (`SEC-USR-PWD`).
-- `TRAN-ID` is still "highest existing + 1", but allocated inside a SERIALIZABLE transaction that
-  also holds a row lock on the account, so concurrent payments cannot collide.
+- `TRAN-ID` is still "highest existing + 1", but allocation is serialised with a transaction-scoped
+  PostgreSQL advisory lock (`pg_advisory_xact_lock`), so concurrent payments on different accounts
+  get distinct ids instead of colliding.
 - A non-numeric account id is rejected with `Acct ID must be Numeric...`; the COBOL moved the raw
   text into `PIC 9(11)` without a check.

@@ -13,7 +13,6 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /** Bill payment, transaction CB00: COBIL00C.cbl PROCESS-ENTER-KEY (lines 154-244). */
@@ -86,7 +85,7 @@ public class BillPayService {
     return Long.parseLong(s);
   }
 
-  @Transactional(isolation = Isolation.SERIALIZABLE)
+  @Transactional
   public BillPayResult process(BillPayRequest request) {
     long acctId = parseAccountId(request.accountId());
     Confirm confirm = parseConfirm(request.confirm());

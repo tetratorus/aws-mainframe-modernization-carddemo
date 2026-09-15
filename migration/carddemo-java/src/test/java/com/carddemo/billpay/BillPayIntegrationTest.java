@@ -8,7 +8,14 @@ import com.carddemo.transaction.Transaction;
 import com.carddemo.transaction.TransactionRepository;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -133,5 +140,41 @@ class BillPayIntegrationTest {
         .isEqualTo("Invalid value. Valid values are (Y/N)...");
     assertThat(billPay(session, "", "").getBody().get("message"))
         .isEqualTo("Acct ID can NOT be empty...");
+  }
+
+  @Test
+  @Order(5)
+  void concurrentPaymentsOnDifferentAccountsGetDistinctTranIds() throws Exception {
+    HttpHeaders session = signon("ADMIN001");
+    long before = transactions.count();
+    List<String> accts =
+        accounts.findAll().stream()
+            .filter(a -> a.getCurrBal().signum() > 0)
+            .limit(8)
+            .map(a -> Long.toString(a.getAcctId()))
+            .toList();
+    assertThat(accts).hasSizeGreaterThanOrEqualTo(4);
+
+    ExecutorService pool = Executors.newFixedThreadPool(accts.size());
+    try {
+      List<Future<ResponseEntity<Map<String, Object>>>> results =
+          pool.invokeAll(
+              accts.stream()
+                  .map(
+                      a ->
+                          (Callable<ResponseEntity<Map<String, Object>>>)
+                              () -> billPay(session, a, "Y"))
+                  .toList());
+      Set<Object> ids = new HashSet<>();
+      for (Future<ResponseEntity<Map<String, Object>>> f : results) {
+        ResponseEntity<Map<String, Object>> res = f.get();
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        ids.add(res.getBody().get("tranId"));
+      }
+      assertThat(ids).hasSize(accts.size());
+    } finally {
+      pool.shutdownNow();
+    }
+    assertThat(transactions.count()).isEqualTo(before + accts.size());
   }
 }

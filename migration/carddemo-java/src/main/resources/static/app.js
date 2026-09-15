@@ -110,7 +110,14 @@
   });
 
   $("billpay-exit").addEventListener("click", async () => {
-    await api("POST", "/api/session/signoff");
+    try {
+      await api("POST", "/api/session/signoff");
+    } catch (err) {
+      if (err.status !== 401) {
+        setMessage(err.message, true);
+        return;
+      }
+    }
     show("signon");
     $("userId").value = "";
     $("password").value = "";
