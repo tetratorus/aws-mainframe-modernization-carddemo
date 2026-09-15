@@ -1,0 +1,13 @@
+body { font-family: ui-monospace, Menlo, Consolas, monospace; background: #000; color: #0f0; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
+header, footer { display: flex; justify-content: space-between; padding: .5rem 1rem; color: #6cf; }
+header .title { color: #fff; }
+.screen { flex: 1; padding: 1rem 2rem; }
+h1 { color: #ff6; font-size: 1.2rem; text-align: center; }
+label { display: block; margin: .8rem 0; }
+input, output { font: inherit; background: #001; color: #fff; border: 0; border-bottom: 1px solid #6cf; padding: .2rem .4rem; min-width: 12rem; display: inline-block; }
+input.one-char { min-width: 2rem; width: 2rem; text-align: center; }
+.keys { margin-top: 1.5rem; display: flex; gap: 1rem; }
+button { font: inherit; background: #002; color: #6cf; border: 1px solid #6cf; padding: .3rem .8rem; cursor: pointer; }
+.hint { color: #999; }
+footer output { color: #ff6; }
+footer output.error { color: #f66; }

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>CardDemo</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header>
+    <span id="tran-id">CC00</span>
+    <span class="title">AWS Mainframe Modernization &mdash; CardDemo</span>
+    <span id="pgm-name">COSGN00C</span>
+  </header>
+
+  <!-- COSGN00 map -->
+  <section id="signon-screen" class="screen">
+    <h1>Sign On</h1>
+    <form id="signon-form" autocomplete="off">
+      <label>User ID <input id="userId" name="userId" maxlength="8" autofocus></label>
+      <label>Password <input id="password" name="password" type="password" maxlength="8"></label>
+      <div class="keys">
+        <button type="submit" id="signon-enter">ENTER = Sign on</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- COBIL00 map -->
+  <section id="billpay-screen" class="screen" hidden>
+    <h1>Bill Payment</h1>
+    <p class="hint">Signed on as <span id="session-user"></span> (<span id="session-type"></span>)</p>
+    <form id="billpay-form" autocomplete="off">
+      <label>Enter Acct ID <input id="accountId" name="accountId" maxlength="11"></label>
+      <label>Your current balance <output id="currentBalance"></output></label>
+      <label>Do you want to pay your balance now? Please confirm (Y/N)
+        <input id="confirm" name="confirm" maxlength="1" class="one-char"></label>
+      <div class="keys">
+        <button type="submit" id="billpay-enter">ENTER = Continue</button>
+        <button type="button" id="billpay-clear">F4 = Clear</button>
+        <button type="button" id="billpay-exit">F3 = Exit</button>
+      </div>
+    </form>
+  </section>
+
+  <footer><output id="message" role="status"></output></footer>
+  <script src="app.js"></script>
+</body>
+</html>
